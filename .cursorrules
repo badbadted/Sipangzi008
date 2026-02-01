@@ -1,0 +1,69 @@
+你是一位todo list系統開發專家。
+
+    # 專案語境
+    我們正在開發「todo list系統」，風格為todo list系統。
+
+# 技術偏好
+- 使用 TypeScript 確保型別安全。
+- 圖片路徑：預設放在 /public/images/ 資料夾下。
+- 使用 Tailwind CSS 進行樣式設計。
+- 使用 Firebase 進行資料庫管理。
+
+
+# 設計風格（UI 規範）
+# UI/UX 風格
+
+## 色彩
+- 中性色：`slate-*`，頁面 `bg-slate-50`，卡片/Header/Modal `bg-white`。
+- 主色：`blue-600`/`blue-700`，focus `ring-blue-500`。
+- 文字：標題 `slate-900`，內文 `slate-700`/`slate-800`，次要 `slate-500`/`slate-600`。
+- 語意：成功/完成/報名中 `green-*`；國內 `blue-*`、國外 `purple-*`；賽事名稱 `text-amber-600`；危險 `red-*`。
+- 列表月份淡底：`slate-50`、`blue-50`、`amber-50`、`green-50`、`violet-50`、`rose-50` 循環。
+
+## 字體與層級
+- 標題：`font-black`、`text-xl`/`text-2xl`。
+- 表頭/標籤：`text-sm font-bold text-slate-700`。
+- Badge：`text-xs font-bold`；次要文字 `text-slate-500`/`text-slate-400`。
+
+## 圓角與版面
+- 大區塊 `rounded-2xl`，卡片/列表 `rounded-xl`，按鈕/輸入 `rounded-lg`，徽章 `rounded-full`。
+- 內容 `max-w-7xl mx-auto`，`px-4 sm:px-6 lg:px-8`、`py-8`。
+
+## 元件
+- Button：primary/secondary/danger；`rounded-lg`；focus ring。
+- Badge：`rounded-full`；domestic/international/success/warning/danger。
+- Input：`border-slate-300 rounded-lg`，focus `ring-2 ring-blue-500`。
+- 圖示：Lucide React，主色 `text-blue-600`；過渡 `transition-colors`。
+
+## UX
+- Header 白底 sticky；篩選用 Popover；列表表頭 sticky；表單用 Modal + Toast + 確認框。
+
+# 程式碼風格
+- 使用 React 19 開發。
+- 使用 Vite 進行建置。
+- 使用 Lucide React 進行圖示。   
+- 使用 React Hook Form 進行表單管理。
+- 使用 React Query 進行資料管理。
+- 使用 React Router 進行路由管理。
+- 使用 React Toastify 進行提示管理。
+- 使用 React Icons 進行圖示管理。
+- 使用 React Datepicker 進行日期選擇管理。
+- 使用 React Select 進行選擇管理。
+- 使用 React Table 進行表格管理。
+- 使用 React Modal 進行彈窗管理。
+- 使用 React Tooltip 進行提示管理。
+- 使用 React Confirm Dialog 進行確認管理。
+
+# React 程式風格（Todolist / 元件通用）
+- 使用 functional components，不使用 class components。
+- 元件與 hooks 命名：元件 PascalCase（如 TodoList.tsx），hooks 以 use 開頭（如 useTodos.ts）。
+- 檔案放置：元件放 `src/components/`，自訂 hook 放 `src/hooks/`，型別放 `src/types/`。
+- Props 型別：使用 `interface` 或 `type` 定義，event handler 使用 `React.ChangeEvent<HTMLInputElement>` 等明確型別。
+- 可重用邏輯抽成 custom hooks；列表狀態集中於單一 hook（如 useTodos），不分散在各元件。
+
+# Todolist 專案約定
+- Todo 資料結構：id（字串）、text（字串）、completed（布林），可選 createdAt。
+- id 產生：使用 `crypto.randomUUID()` 或 `Date.now().toString()`，由 useTodos 統一產生。
+- 列表狀態集中於 `useTodos` hook，CRUD、篩選邏輯與 localStorage 讀寫皆在此 hook 內。
+- localStorage key：固定使用同一 key（如 `todos`）；載入時讀取、每次變更時寫入。
+- 篩選狀態：支援「全部 / 未完成 / 已完成」三種，由 useTodos 回傳 filtered 列表與 setFilter。
