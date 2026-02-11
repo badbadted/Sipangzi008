@@ -5,6 +5,7 @@ interface TodoListProps {
   todos: Todo[];
   onToggle: (id: string) => void;
   onUpdate: (id: string, text: string) => void;
+  onUpdatePlannedDate: (id: string, plannedCompletionDate: number | undefined) => void;
   onRemove: (id: string) => void;
 }
 
@@ -12,6 +13,7 @@ export function TodoList({
   todos,
   onToggle,
   onUpdate,
+  onUpdatePlannedDate,
   onRemove,
 }: TodoListProps) {
   if (todos.length === 0) {
@@ -33,6 +35,7 @@ export function TodoList({
           todo={todo}
           onToggle={onToggle}
           onUpdate={onUpdate}
+          onUpdatePlannedDate={onUpdatePlannedDate}
           onRemove={onRemove}
         />
       ))}

@@ -1,14 +1,20 @@
 import { useState, useEffect, useMemo } from 'react';
-import type { Todo, FilterType } from '../types/todo';
+import type { Todo, FilterType, UserFilterType } from '../types/todo';
 
 const STORAGE_KEY = 'todos';
+
+function migrateTodo(t: Todo & { userId?: Todo['userId'] }): Todo {
+  if (t.userId === 'TED' || t.userId === 'KU') return t as Todo;
+  return { ...t, userId: 'TED' };
+}
 
 function loadTodos(): Todo[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as Todo[];
-    return Array.isArray(parsed) ? parsed : [];
+    const parsed = JSON.parse(raw) as (Todo & { userId?: Todo['userId'] })[];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(migrateTodo);
   } catch {
     return [];
   }
@@ -21,30 +27,48 @@ function saveTodos(todos: Todo[]): void {
 export function useTodos() {
   const [todos, setTodos] = useState<Todo[]>(() => loadTodos());
   const [filter, setFilter] = useState<FilterType>('all');
+  const [userFilter, setUserFilter] = useState<UserFilterType>('all');
 
   useEffect(() => {
     saveTodos(todos);
   }, [todos]);
 
   const filteredTodos = useMemo(() => {
+    let list = todos;
+    if (userFilter !== 'all') {
+      list = list.filter((t) => t.userId === userFilter);
+    }
     switch (filter) {
       case 'active':
-        return todos.filter((t) => !t.completed);
+        list = list.filter((t) => !t.completed);
+        break;
       case 'completed':
-        return todos.filter((t) => t.completed);
+        list = list.filter((t) => t.completed);
+        break;
       default:
-        return todos;
+        break;
     }
-  }, [todos, filter]);
+    return [...list].sort((a, b) => {
+      const da = a.plannedCompletionDate ?? Infinity;
+      const db = b.plannedCompletionDate ?? Infinity;
+      return da - db;
+    });
+  }, [todos, filter, userFilter]);
 
-  const addTodo = (text: string) => {
+  const addTodo = (
+    text: string,
+    userId: Todo['userId'],
+    plannedCompletionDate: number
+  ) => {
     const trimmed = text.trim();
     if (!trimmed) return;
     const newTodo: Todo = {
       id: crypto.randomUUID(),
       text: trimmed,
       completed: false,
+      userId,
       createdAt: Date.now(),
+      plannedCompletionDate,
     };
     setTodos((prev) => [newTodo, ...prev]);
   };
@@ -67,13 +91,27 @@ export function useTodos() {
     setTodos((prev) => prev.filter((t) => t.id !== id));
   };
 
+  const updatePlannedDate = (
+    id: string,
+    plannedCompletionDate: number | undefined
+  ) => {
+    setTodos((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, plannedCompletionDate } : t
+      )
+    );
+  };
+
   return {
     todos: filteredTodos,
     filter,
     setFilter,
+    userFilter,
+    setUserFilter,
     addTodo,
     toggleTodo,
     updateTodo,
     removeTodo,
+    updatePlannedDate,
   };
 }
