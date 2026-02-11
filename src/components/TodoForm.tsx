@@ -32,8 +32,7 @@ export function TodoForm({ onSubmit }: TodoFormProps) {
     setPlannedDate(todayString());
   };
 
-  const canSubmit =
-    text.trim() !== '' && userId !== '' && plannedDate.trim() !== '';
+  const canSubmit = text.trim() !== '' && plannedDate.trim() !== '';
 
   return (
     <form className="space-y-4 mb-6" onSubmit={handleSubmit}>
